@@ -37,6 +37,36 @@ const fetchSections = [
 
   fetch('sections/ContactMe.html').then(res => res.text()).then(data => {
     document.getElementById('contact').innerHTML = data;
+
+    // Gắn submit handler sau khi DOM đã render
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Ngăn reload trang
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      const formData = { name, email, subject, message };
+
+      try {
+        // Gọi API gửi thông tin liên hệ
+        const response = await fetch(`${CONFIG.API_BASE_URL}/contact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert('✅ Gửi thành công! Cảm ơn bạn đã liên hệ.');
+          form.reset();
+        }
+      } catch (error) {
+        console.error('❌ Lỗi kết nối:', error);
+        alert('❌ Đã xảy ra lỗi khi gửi biểu mẫu.');
+      }
+    });
   })
 ];
 
